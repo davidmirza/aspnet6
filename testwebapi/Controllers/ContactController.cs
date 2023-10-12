@@ -34,6 +34,7 @@ namespace testwebapi.Controllers
             }
             //  var contact = await _contactCtx.Contacts.FindAsync(FirstName);
             var contact =  _contactCtx.Contacts.FirstOrDefault(a => a.FirstName == FirstName);
+            //var contact =  _contactCtx.Contacts.Where<>
             if(contact== null)
             {
                 return NotFound();
@@ -48,14 +49,54 @@ namespace testwebapi.Controllers
 
             return CreatedAtAction(nameof(GetContact), new { FirstName = ctx.FirstName }, ctx);
         }
-        [HttpGet()]
+        [HttpPost]
+        public async Task<ActionResult<dynamic>> InsertBuyer(Buyer byr)
+        {
+            Result rst = new Result();
+            rst.success = false;
+            try
+            {
+                
+                Buyer inByr = new Buyer();
+                inByr.rowguid = Guid.NewGuid();
+                inByr.isActive = 1;
+                inByr.Email = byr.Email;
+                inByr.ID_Product = byr.ID_Product;
+                inByr.Total = byr.Total;
+                _contactCtx.Buyers.Add(inByr);
+                try
+                {
+                   var hasil =  await _contactCtx.SaveChangesAsync();
+                    rst.success = true;
+                    rst.Message = inByr;
+                    return rst;
+                }
+                catch(DbUpdateException ex)
+                {
+                    rst.Message = ex.Message;
+                    return rst;
+                }
+                     
+                
+            }
+            catch(UserFriendlyException uf)
+            {
+                rst.Message = uf.Message;
+                return rst;
+            }
+        }
+        //[HttpGet]
+        //public async Task<dynamic> GetBuyer(string? Email = "")
+        //{
+
+        //}
+        [HttpGet]
         public async Task<ActionResult<dynamic>> test(string? Name = null )
         {
             List<DtTest> tmpResult = new List<DtTest>();
             var Result = new AjaxResponse();
             try
             {
-                
                 if (Name == null)
                 {
                     Result = new AjaxResponse(new { success = false, data = "Kosong", message = "data empty" });
@@ -82,9 +123,6 @@ namespace testwebapi.Controllers
                                 tmp.Jumlah = 1;
                                 tmpResult.Add(tmp);
                             }
-                            
-                           
-                            
                             tmpHuruf = CurrHuruf;
                         }
                         Result = new AjaxResponse(new { success = true, data = Name, message = tmpResult });
@@ -92,7 +130,6 @@ namespace testwebapi.Controllers
                     else
                     {
                         Result = new AjaxResponse(new { success = true, data = Name, message = "" });
-
                     }
                     return Result;
                 }
@@ -102,8 +139,6 @@ namespace testwebapi.Controllers
                  Result = new AjaxResponse(new { success = false, message = "data empty" });
                 return Result;
             }
-            
-
         }
     }
 
@@ -112,5 +147,11 @@ namespace testwebapi.Controllers
         public int Jumlah { get; set; }
         public string Huruf { get; set; }
     }
+    public class Result
+    {
+        public bool success { get; set; }
+        public Object Message { get; set; }
+    }
+   
 }
 

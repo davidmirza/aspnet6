@@ -9,6 +9,7 @@ namespace testwebapi.Models
 
         }
         public DbSet<Contact> Contacts { get; set; }
-
+        public DbSet<Buyer> Buyers { get; set; }
+        
     }
 }
