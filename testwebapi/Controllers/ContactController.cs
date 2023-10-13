@@ -4,6 +4,7 @@ using testwebapi.Models;
 using Microsoft.EntityFrameworkCore;
 using Abp.Web.Models;
 using Abp.UI;
+using testwebapi.Base;
 
 namespace testwebapi.Controllers
 {
@@ -11,79 +12,85 @@ namespace testwebapi.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private readonly ContactCtx _contactCtx;
-        public ContactController(ContactCtx contactCtx)
+       
+        private readonly IBuyer _ibuyer;
+
+        public ContactController(IBuyer Ibuyer)
         {
-            _contactCtx = contactCtx;
+            
+            _ibuyer = Ibuyer;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
+        public async Task<ActionResult<List<Contact>>> GetContacts()
         {
-            if(_contactCtx.Contacts == null)
-            {
+            var result = await _ibuyer.GetContacts();
+            if (result == null)
                 return NotFound();
-            }
-            return await _contactCtx.Contacts.ToListAsync();
+
+            return result;
         }
         [HttpGet]
         public async Task<ActionResult<Contact>> GetContact(string FirstName)
         {
-            if (_contactCtx.Contacts == null)
-            {
-                return NotFound();
-            }
-            //  var contact = await _contactCtx.Contacts.FindAsync(FirstName);
-            var contact =  _contactCtx.Contacts.FirstOrDefault(a => a.FirstName == FirstName);
-            //var contact =  _contactCtx.Contacts.Where<>
-            if(contact== null)
-            {
-                return NotFound();
-            }
-            return contact;
+            //if (_contactCtx.Contacts == null)
+            //{
+            //    return NotFound();
+            //}
+            ////  var contact = await _contactCtx.Contacts.FindAsync(FirstName);
+            //var contact =  _contactCtx.Contacts.FirstOrDefault(a => a.FirstName == FirstName);
+            ////var contact =  _contactCtx.Contacts.Where<>
+            //if(contact== null)
+            //{
+            //    return NotFound();
+            //}
+            //return contact;
+            return null;
         }
         [HttpPost]
         public async Task<ActionResult<Contact>> postContact(Contact ctx)
         {
-            _contactCtx.Contacts.Add(ctx);
-            await _contactCtx.SaveChangesAsync();
+            //_contactCtx.Contacts.Add(ctx);
+            //await _contactCtx.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetContact), new { FirstName = ctx.FirstName }, ctx);
+            //return CreatedAtAction(nameof(GetContact), new { FirstName = ctx.FirstName }, ctx);
+            return null;
         }
         [HttpPost]
         public async Task<ActionResult<dynamic>> InsertBuyer(Buyer byr)
         {
-            Result rst = new Result();
-            rst.success = false;
-            try
-            {
+            return true;
+            //Result rst = new Result();
+            //rst.success = false;
+            //try
+            //{
                 
-                Buyer inByr = new Buyer();
-                inByr.rowguid = Guid.NewGuid();
-                inByr.isActive = 1;
-                inByr.Email = byr.Email;
-                inByr.ID_Product = byr.ID_Product;
-                inByr.Total = byr.Total;
-                _contactCtx.Buyers.Add(inByr);
-                try
-                {
-                   var hasil =  await _contactCtx.SaveChangesAsync();
-                    rst.success = true;
-                    rst.Message = inByr;
-                    return rst;
-                }
-                catch(DbUpdateException ex)
-                {
-                    rst.Message = ex.Message;
-                    return rst;
-                }
+            //    Buyer inByr = new Buyer();
+            //    inByr.rowguid = Guid.NewGuid();
+            //    inByr.isActive = 1;
+            //    inByr.Email = byr.Email;
+            //    inByr.ID_Product = byr.ID_Product;
+            //    inByr.Total = byr.Total;
+            //    _contactCtx.Buyers.Add(inByr);
+            //    try
+            //    {
+            //       var hasil =  await _contactCtx.SaveChangesAsync();
+            //        rst.success = true;
+            //        rst.Message = inByr;
+            //        return rst;
+            //    }
+            //    catch(DbUpdateException ex)
+            //    {
+            //        rst.Message = ex.Message;
+            //        return rst;
+            //    }
                      
                 
-            }
-            catch(UserFriendlyException uf)
-            {
-                rst.Message = uf.Message;
-                return rst;
-            }
+            //}
+            //catch(UserFriendlyException uf)
+            //{
+            //    rst.Message = uf.Message;
+            //    return rst;
+            //}
         }
         //[HttpGet]
         //public async Task<dynamic> GetBuyer(string? Email = "")

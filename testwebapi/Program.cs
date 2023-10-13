@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using testwebapi.Models;
+using testwebapi.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IBuyer, BuyerManager>();// register the interface
 
 var app = builder.Build();
 
